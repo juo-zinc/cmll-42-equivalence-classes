@@ -293,16 +293,16 @@ t_0+t_1+t_2+t_3 \equiv 0 \pmod 3.
 \begin{definition}[Corner state space]
 Define
 \[
-X := \{\,(\tau,t)\mid \tau\in S(P),\ t \in \Z_3^{\,4},\ t_0+t_1+t_2+t_3\equiv 0 \pmod 3\,\}.
+X := \{\,(\tau,t)\mid \tau \in \mathfrak{S}(P),\ t \in \Z_3^{\,4},\ t_0+t_1+t_2+t_3\equiv 0 \pmod 3\,\}.
 \]
 \end{definition}
 
-\begin{proposition}[Cardinality of $X$]\label{prop:|X|}
+\begin{proposition}[Cardinality of $X$]\label{prop:X-card}
 We have $|X|=4!\cdot 3^3=648$.
 \end{proposition}
 
 \begin{proof}
-There are $4!=24$ choices for $\tau$. For $t$, choose $(t_0,t_1,t_2)\in Z_3^{\,3}$ arbitrarily (giving $3^3$ choices),
+There are $4!=24$ choices for $\tau$. For $t$, choose $(t_0,t_1,t_2)\in (\Zthree)^{\,3}$ arbitrarily (giving $3^3$ choices),
 and then $t_3$ is uniquely determined by the constraint:
 \[
 t_3 \equiv -(t_0+t_1+t_2)\pmod 3.
