@@ -1,0 +1,553 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage[hidelinks]{hyperref}
+
+% --- Theorem environments ---
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+
+% --- Commands ---
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Zthree}{\Z/3\Z}
+\newcommand{\sgn}{\operatorname{sgn}}
+\newcommand{\id}{\mathrm{id}}
+
+\title{Why CMLL Has 42 Cases: Reachability, Parity, and Burnside's Lemma}
+\author{Jamie Luo}
+\date{December 14, 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+We give a group-theoretic derivation of the number of CMLL cases arising in
+the Roux method for the Rubik’s Cube. Under the standard CMLL constraints—fixing the bottom-layer corners and a
+specified set of six edges—we show that the space of top-layer corner states
+compatible with the cube-group reachability invariants has cardinality
+$4!\cdot 3^3 = 648$.
+In particular, no even-permutation restriction is imposed on the corner
+permutation, as parity may be absorbed by the remaining unsolved edges.
+
+\noindent
+We then quotient this corner state space by a natural symmetry
+action and apply Burnside's lemma to compute the resulting orbit count.
+The calculation yields exactly $42$ equivalence classes.
+Here ``admissible'' refers to global reachability (existence of a globally reachable
+cube state satisfying the fixed-piece constraints), not reachability via move sequences
+that preserve the Roux blocks throughout.
+\end{abstract}
+
+\section{Introduction}
+
+In the Roux method for solving the Rubik's Cube, the \emph{CMLL} step completes the
+four top-layer corners while preserving two already-built blocks.
+A recurring point of confusion is whether the corner-permutation parity forces one
+to ``divide by $2$'' (i.e.\ restrict to even corner permutations) when counting CMLL cases.
+
+\noindent The resolution is that \emph{CMLL is typically not the final step of the Roux solve}:
+several edges (notably in the M-slice) remain unsolved and can absorb permutation parity.
+Consequently, the set of attainable top-corner states under the CMLL constraints
+has size $4!\cdot 3^3 = 648$ rather than $12\cdot 3^3 = 324$.
+After establishing this state space, we then classify these $648$ states up to a standard
+symmetry relation and obtain exactly $42$ equivalence classes via Burnside's lemma.
+
+\noindent We proceed in two steps: first we justify the $648$ admissible top-corner states under the usual CMLL constraints; then we quotient by the standard symmetries and apply Burnside's lemma to obtain $42$.
+
+\section{Preliminaries and State Model}
+
+We model the Rubik's Cube using the standard \emph{cubie model}. Let
+\[
+C=\{1,\dots,8\} \quad\text{(corners)}, \qquad
+E=\{1,\dots,12\} \quad\text{(edges)}.
+\]
+A cube state is represented by a quadruple
+\[
+(\sigma_c, t_c, \sigma_e, t_e),
+\]
+where:
+\begin{itemize}
+  \item $\sigma_c \in S_8$ is the corner permutation;
+  \item $t_c=(t_1,\dots,t_8)\in (\Z/3\Z)^8$ is the corner orientation vector;
+  \item $\sigma_e \in S_{12}$ is the edge permutation;
+  \item $t_e=(f_1,\dots,f_{12})\in (\Z/2\Z)^{12}$ is the edge orientation vector.
+\end{itemize}
+We take the solved cube as the identity state.
+
+\begin{remark}
+The particular conventions used to assign corner/edge orientations do not
+affect the statements below, provided they satisfy the standard global
+constraints described in Theorem~\ref{thm:reachability}.
+\end{remark}
+
+\section{Classical Reachability Conditions}
+
+The following theorem is classical in the mathematical analysis of the Rubik's
+Cube.
+
+\begin{theorem}[Reachability Invariants]\label{thm:reachability}
+A state $(\sigma_c,t_c,\sigma_e,t_e)$ is reachable from the solved cube by legal
+face turns if and only if the following three conditions hold:
+\begin{enumerate}
+  \item \textbf{Parity:} $\sgn(\sigma_c) = \sgn(\sigma_e)$;
+  \item \textbf{Corner orientation:} $\sum_{i=1}^8 t_i \equiv 0 \pmod{3}$;
+  \item \textbf{Edge orientation:} $\sum_{j=1}^{12} f_j \equiv 0 \pmod{2}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}
+The necessity direction can be verified by checking that each generator
+$U,D,L,R,F,B$ preserves these three quantities. The sufficiency direction is
+nontrivial in general. In this note we only require Theorem~\ref{thm:reachability}
+as a black box and give a fully constructive argument in the constrained setting
+below.
+\end{remark}
+
+\section{Constrained Setting and Statement}
+
+Fix the following constraints, motivated by partially built cube states:
+
+\begin{itemize}
+  \item The \emph{bottom four corner positions} (say positions $5,6,7,8$) are solved:
+  \[
+  \sigma_c(i)=i,\quad t_i=0 \qquad (i=5,6,7,8).
+  \]
+  \item A prescribed subset $B\subset E$ of \emph{six edges} is solved in both
+  position and orientation:
+  \[
+  \sigma_e(k)=k,\quad f_k=0 \qquad (k\in B).
+  \]
+  Let $R:=E\setminus B$ be the remaining set of \emph{unconstrained} edges, so
+  $|R|=6$.
+\end{itemize}
+
+\noindent Let $\tau := \sigma_c|_{\{1,2,3,4\}} \in S_4$ denote the induced permutation of
+the top four corner positions, and let $(t_1,t_2,t_3,t_4)$ denote their
+orientations.
+
+\begin{definition}[Admissible top-corner state]
+A pair $(\tau,(t_1,t_2,t_3,t_4))$ with $\tau\in S_4$ and
+$(t_1,t_2,t_3,t_4)\in(\Z/3\Z)^4$ satisfying $t_1+t_2+t_3+t_4\equiv 0\pmod 3$
+is called \emph{admissible} if it occurs as the top-corner component of some cube state
+that satisfies the fixed bottom corners and fixed edge set $B$ and is globally reachable
+from the solved cube.
+\end{definition}
+
+\begin{theorem}[Corner state space under six fixed edges]\label{thm:main}
+Under the constraints above, every top-corner configuration consisting of an
+arbitrary permutation $\tau\in S_4$ and an orientation vector
+$(t_1,t_2,t_3,t_4)\in (\Z/3\Z)^4$ satisfying
+\[
+t_1+t_2+t_3+t_4 \equiv 0 \pmod{3}
+\]
+is admissible. Consequently, the number of admissible top-corner states is
+$4!\cdot 3^3 = 648$.
+\end{theorem}
+
+
+
+\begin{remark}
+Theorem~\ref{thm:main} is a global consistency statement: it asserts existence of a globally
+reachable cube state realizing the specified top-corner data under the fixed-piece constraints.
+It does not address reachability via move sequences that preserve the Roux blocks throughout.
+\end{remark}
+
+
+\section{Proof of Theorem~\ref{thm:main}}
+
+We prove realizability by constructing compatible edge data that satisfy the
+reachability invariants of Theorem~\ref{thm:reachability}.
+
+\subsection{Corner orientation constraint}
+
+\begin{lemma}\label{lem:corner-orient}
+If $(t_1,t_2,t_3,t_4)$ satisfies $\sum_{i=1}^4 t_i \equiv 0 \pmod{3}$ and
+$t_5=\cdots=t_8=0$, then $\sum_{i=1}^8 t_i \equiv 0 \pmod{3}$.
+\end{lemma}
+
+\begin{proof}
+Immediate:
+\[
+\sum_{i=1}^8 t_i = \sum_{i=1}^4 t_i + \sum_{i=5}^8 t_i \equiv 0 + 0 \equiv 0
+\pmod{3}.
+\]
+\end{proof}
+
+\subsection{Edge orientation constraint}
+
+\begin{lemma}\label{lem:edge-orient}
+There exists an edge orientation assignment $(f_1,\dots,f_{12})$ such that
+$f_k=0$ for all $k\in B$ and $\sum_{j=1}^{12} f_j \equiv 0 \pmod{2}$.
+\end{lemma}
+
+\begin{proof}
+Set $f_k=0$ for $k\in B$. On the remaining set $R$ (which has size $6$), freely
+choose the values of $f$ on any five elements of $R$. Define the sixth value so
+that the total sum over $R$ is $0$ modulo $2$. Then
+$\sum_{j=1}^{12} f_j = \sum_{k\in B} f_k + \sum_{r\in R} f_r \equiv 0+0 \equiv 0
+\pmod{2}$.
+\end{proof}
+
+\subsection{Parity matching via the remaining edges}
+
+\begin{lemma}\label{lem:parity}
+For any $\tau\in S_4$ there exists a permutation $\pi\in S_6$ such that
+$\sgn(\pi)=\sgn(\tau)$.
+\end{lemma}
+
+\begin{proof}
+If $\sgn(\tau)=+1$, take $\pi=\id$. If $\sgn(\tau)=-1$, take $\pi$ to be any
+transposition in $S_6$, e.g.\ $(1\ 2)$ in a fixed labeling of the $6$ elements.
+A transposition is an odd permutation, hence has sign $-1$. Therefore
+$\sgn(\pi)=\sgn(\tau)$ in all cases.
+\end{proof}
+
+\subsection{Assembling a reachable full state}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+Fix an arbitrary $\tau\in S_4$ and an orientation vector $(t_1,t_2,t_3,t_4)$
+satisfying $\sum_{i=1}^4 t_i \equiv 0 \pmod{3}$. Define:
+\begin{itemize}
+  \item $\sigma_c\in S_8$ by setting $\sigma_c|_{\{1,2,3,4\}}=\tau$ and
+  $\sigma_c(i)=i$ for $i=5,6,7,8$;
+  \item $t_c=(t_1,\dots,t_8)$ by setting $t_5=\cdots=t_8=0$;
+  \item choose $\pi\in S_6$ as in Lemma~\ref{lem:parity};
+  \item define $\sigma_e\in S_{12}$ by $\sigma_e(k)=k$ for $k\in B$ and
+  $\sigma_e|_{R}=\pi$ (after identifying $R$ with a $6$-element set);
+  \item choose $t_e=(f_1,\dots,f_{12})$ as in Lemma~\ref{lem:edge-orient}.
+\end{itemize}
+
+Then:
+\begin{enumerate}
+  \item By Lemma~\ref{lem:corner-orient}, $\sum_{i=1}^8 t_i \equiv 0 \pmod{3}$.
+  \item By Lemma~\ref{lem:edge-orient}, $\sum_{j=1}^{12} f_j \equiv 0 \pmod{2}$.
+  \item For parity, since $\sigma_c$ fixes corners $5$--$8$, we have
+  $\sgn(\sigma_c)=\sgn(\tau)$. Since $\sigma_e$ fixes all edges in $B$, we have
+  $\sgn(\sigma_e)=\sgn(\pi)$. By Lemma~\ref{lem:parity},
+  \[
+  \sgn(\sigma_c)=\sgn(\tau)=\sgn(\pi)=\sgn(\sigma_e).
+  \]
+\end{enumerate}
+Thus all conditions of Theorem~\ref{thm:reachability} hold, so the constructed state
+$(\sigma_c,t_c,\sigma_e,t_e)$ is globally reachable from the solved cube.
+By construction it satisfies the fixed bottom corners and the fixed edge set $B$,
+and its top-corner component is $(\tau,(t_1,t_2,t_3,t_4))$.
+This proves admissibility of every such top-corner configuration.
+
+\noindent
+For the count: $\tau$ can be chosen arbitrarily in $S_4$, giving $4!=24$ choices.
+For orientations, the constraint $\sum_{i=1}^4 t_i\equiv 0\pmod 3$ leaves $3^3$
+choices (choose three entries freely and determine the fourth).
+Hence the total is $4!\cdot 3^3=648$.
+\end{proof}
+
+\section{Remarks and Variants}
+
+\begin{remark}
+If instead \emph{all} $12$ edges are required solved, then $\sigma_e=\id$ forces
+$\sgn(\sigma_c)=+1$. With bottom corners fixed, the top-corner permutation must
+lie in $A_4$ (size $12$), yielding $12\cdot 3^3=324$ reachable top-corner states.
+\end{remark}
+
+\section{Orbit-counting setup: the state space and symmetries}
+
+We consider four \emph{positions} arranged cyclically, corresponding to the four
+corner positions in the top layer. For definiteness, label the positions by
+\[
+P := \{0,1,2,3\},
+\]
+with the cyclic order $0\to 1\to 2\to 3\to 0$.
+
+\begin{definition}[Permutation data]\label{def:tau}
+Let $\mathfrak{S}(P)\cong S_4$ be the symmetric group on $P$. We represent a
+corner permutation state by a bijection
+\[
+\tau: P \to P,
+\]
+interpreted as: \emph{the corner cubie labeled $x\in P$ occupies position
+$\tau^{-1}(x)$}, equivalently \emph{the cubie occupying position $p$ is
+$\tau(p)$}. Concretely, $\tau$ is a $4$-tuple $(\tau(0),\tau(1),\tau(2),\tau(3))$
+with distinct entries in $\{0,1,2,3\}$.
+\end{definition}
+
+\begin{definition}[Orientation data]\label{def:t}
+Let $\mathbb{Z}_3 := \mathbb{Z}/3\mathbb{Z}$. An orientation state is a $4$-tuple
+\[
+t=(t_0,t_1,t_2,t_3)\in \Z_3^{\,4}
+\]
+subject to the corner twist constraint
+\[
+t_0+t_1+t_2+t_3 \equiv 0 \pmod 3.
+\]
+\end{definition}
+
+\begin{definition}[Corner state space]
+Define
+\[
+X := \{\,(\tau,t)\mid \tau\in S(P),\ t \in \Z_3^{\,4},\ t_0+t_1+t_2+t_3\equiv 0 \pmod 3\,\}.
+\]
+\end{definition}
+
+\begin{proposition}[Cardinality of $X$]\label{prop:|X|}
+We have $|X|=4!\cdot 3^3=648$.
+\end{proposition}
+
+\begin{proof}
+There are $4!=24$ choices for $\tau$. For $t$, choose $(t_0,t_1,t_2)\in Z_3^{\,3}$ arbitrarily (giving $3^3$ choices),
+and then $t_3$ is uniquely determined by the constraint:
+\[
+t_3 \equiv -(t_0+t_1+t_2)\pmod 3.
+\]
+Hence $|X|=24\cdot 27=648$.
+\end{proof}
+
+\section{The symmetry group acting on $X$}
+
+We define two types of transformations of $X$:
+\begin{enumerate}
+  \item position symmetries of the $4$-cycle (a dihedral action on positions),
+  \item an involution that inverts all corner twists.
+\end{enumerate}
+Together these generate a group of order $16$.
+
+\subsection{Dihedral symmetries on positions}
+
+Let $D_4$ be the dihedral group of the square, realized here as the group of
+symmetries of the cyclically ordered set $P$.
+
+\begin{definition}[The group $D_4$]\label{def:D4}
+Let $r$ be the rotation $r(p)=p+1\ (\mathrm{mod}\ 4)$, and let $s$ be the
+reflection $s(0)=0$, $s(1)=3$, $s(2)=2$, $s(3)=1$. Let
+\[
+D_4 := \langle r,s \mid r^4=e,\ s^2=e,\ srs=r^{-1}\rangle.
+\]
+We view each $g\in D_4$ as a permutation of the position set $P$.
+\end{definition}
+
+\begin{definition}[Action of $D_4$ on $X$]\label{def:D4action}
+For $g\in D_4$ and $(\tau,t)\in X$, define
+\[
+g\cdot(\tau,t) := (\tau\circ g^{-1},\ t\circ g^{-1}),
+\]
+where $(\tau\circ g^{-1})(p)=\tau(g^{-1}(p))$ and similarly
+$(t\circ g^{-1})(p)=t_{g^{-1}(p)}$.
+\end{definition}
+
+\begin{remark}
+This is the standard \emph{relabeling of positions} action: applying $g$ rotates
+or reflects the top layer positions, so the cubie and twist values attached to a
+position $p$ are transported from the previous position $g^{-1}(p)$.
+\end{remark}
+
+\subsection{Twist inversion}
+
+\begin{definition}[Twist inversion]\label{def:iota}
+Define $\iota:X\to X$ by
+\[
+\iota(\tau,t) := (\tau, -t),
+\qquad\text{where } (-t)_p := -t_p\in \mathbb Z_3.
+\]
+\end{definition}
+
+\begin{lemma}\label{lem:iota-well-defined}
+$\iota$ is well-defined on $X$ and satisfies $\iota^2=\mathrm{id}_X$.
+\end{lemma}
+
+\begin{proof}
+If $\sum_{p\in P} t_p \equiv 0\pmod 3$, then
+\[
+\sum_{p\in P} (-t_p) \equiv -\sum_{p\in P} t_p \equiv 0 \pmod 3,
+\]
+so $-t$ also satisfies the constraint and $\iota(\tau,t)\in X$. Also,
+$-(-t)=t$, hence $\iota^2=\mathrm{id}_X$.
+\end{proof}
+
+\begin{lemma}\label{lem:commute}
+For every $g\in D_4$ we have $\iota(g\cdot x)=g\cdot\iota(x)$ for all $x\in X$.
+\end{lemma}
+
+\begin{proof}
+Let $x=(\tau,t)$. Then
+\[
+\iota(g\cdot(\tau,t))
+=\iota(\tau\circ g^{-1},\, t\circ g^{-1})
+=(\tau\circ g^{-1},\, -(t\circ g^{-1})).
+\]
+On the other hand
+\[
+g\cdot \iota(\tau,t)
+=g\cdot(\tau,-t)
+=(\tau\circ g^{-1},\, (-t)\circ g^{-1})
+=(\tau\circ g^{-1},\, -(t\circ g^{-1})).
+\]
+Thus they agree.
+\end{proof}
+
+\subsection{The full action group}
+
+\begin{definition}[The action group $K$]\label{def:K}
+Let $C_2=\langle \iota\rangle$ be the order-$2$ group generated by twist inversion.
+By Lemma~\ref{lem:commute}, the actions of $D_4$ and $C_2$ commute, so we obtain a
+well-defined action of the direct product
+\[
+K := D_4\times C_2
+\]
+on $X$, given by
+\[
+(g,\epsilon)\cdot(\tau,t) := g\cdot(\tau,\epsilon t),
+\quad\text{where }\epsilon\in\{+1,-1\}\text{ and }(-1)t:=-t.
+\]
+\end{definition}
+
+\begin{proposition}\label{prop:Korder}
+$|K|=16$.
+\end{proposition}
+
+\begin{proof}
+$|D_4|=8$ and $|C_2|=2$, so $|K|=|D_4||C_2|=16$.
+\end{proof}
+
+\section{Orbit count via Burnside's lemma}
+
+\begin{definition}[Equivalence classes]
+Define an equivalence relation on $X$ by
+\[
+x\sim y \iff \exists k\in K \text{ such that } y=k\cdot x.
+\]
+The equivalence classes are precisely the $K$-orbits in $X$.
+\end{definition}
+
+\begin{theorem}[Orbit count]\label{thm:42}
+The action of $K$ on $X$ has exactly $42$ orbits.
+\end{theorem}
+
+The proof uses the classical orbit-counting tool.
+
+\begin{theorem}[Burnside's lemma]\label{thm:burnside}
+Let a finite group $K$ act on a finite set $X$. Then the number of orbits is
+\[
+|X/K| = \frac{1}{|K|}\sum_{k\in K} |\mathrm{Fix}(k)|,
+\]
+where $\mathrm{Fix}(k)=\{x\in X: k\cdot x=x\}$.
+\end{theorem}
+
+\subsection{Fixed-point counts}
+
+We now compute $|\mathrm{Fix}(k)|$ for each $k\in K$.
+
+\begin{lemma}\label{lem:fix-identity}
+For the identity element $e\in K$, we have $|\mathrm{Fix}(e)|=|X|=648$.
+\end{lemma}
+
+\begin{proof}
+Trivial: $e\cdot x=x$ for all $x\in X$.
+\end{proof}
+
+\begin{lemma}\label{lem:fix-iota}
+For the element $\iota\in K$ (i.e.\ $(e,-1)$ in $D_4\times C_2$), we have
+$|\mathrm{Fix}(\iota)|=24$.
+\end{lemma}
+
+\begin{proof}
+A state $(\tau,t)\in X$ is fixed by $\iota$ iff
+\[
+(\tau,t)=\iota(\tau,t)=(\tau,-t),
+\]
+which holds iff $t=-t$ in $(\Zthree)^4$. In $\Zthree$, the equation $u=-u$ implies
+$2u\equiv 0\pmod 3$, hence $u\equiv 0\pmod 3$. Therefore $t=(0,0,0,0)$ is the only
+orientation vector fixed by $\iota$.
+
+\noindent With $t$ forced to be the zero vector, $\tau$ may be chosen arbitrarily in $S_4$,
+giving $4!=24$ fixed states.
+\end{proof}
+
+\begin{lemma}\label{lem:fix-nontrivial-D4}
+Let $g\in D_4$ be nontrivial ($g\neq e$). Then
+\[
+|\mathrm{Fix}((g,+1))|=0.
+\]
+\end{lemma}
+
+\begin{proof}
+Suppose $(\tau,t)\in X$ is fixed by $(g,+1)$, i.e.\ by the position relabeling action
+of $g$. By Definition~\ref{def:D4action}, the condition $(g,+1)\cdot(\tau,t)=(\tau,t)$
+implies in particular
+\[
+\tau\circ g^{-1}=\tau.
+\]
+Equivalently, $\tau(g^{-1}(p))=\tau(p)$ for all $p\in P$.
+
+\noindent Since $g\neq e$ as a permutation of $P$, there exists some $p\in P$ with
+$g^{-1}(p)\neq p$. Applying the equality above at this $p$ yields
+\[
+\tau(g^{-1}(p))=\tau(p)
+\quad\text{with}\quad g^{-1}(p)\neq p.
+\]
+But $\tau$ is a bijection $P\to P$ (Definition~\ref{def:tau}), so it cannot take
+the same value at two distinct inputs. This is a contradiction. Hence no such
+$(\tau,t)$ exists, and the fixed-point set is empty.
+\end{proof}
+
+\begin{lemma}\label{lem:fix-nontrivial-D4-iota}
+Let $g\in D_4$ be nontrivial ($g\neq e$). Then
+\[
+|\mathrm{Fix}((g,-1))|=0.
+\]
+\end{lemma}
+
+\begin{proof}
+If $(\tau,t)$ is fixed by $(g,-1)$, then by Definition~\ref{def:K} and
+Definition~\ref{def:D4action} we have
+\[
+(\tau,t)=(g,-1)\cdot(\tau,t)=g\cdot(\tau,-t)=(\tau\circ g^{-1},\, (-t)\circ g^{-1}).
+\]
+In particular, $\tau=\tau\circ g^{-1}$. The same bijectivity argument as in
+Lemma~\ref{lem:fix-nontrivial-D4} yields a contradiction whenever $g\neq e$.
+Thus the fixed-point set is empty.
+\end{proof}
+
+\subsection{Conclusion of the orbit count}
+
+\begin{proof}[Proof of Theorem~\ref{thm:42}]
+By Proposition~\ref{prop:Korder}, $|K|=16$. By Lemmas~\ref{lem:fix-identity},
+\ref{lem:fix-iota}, \ref{lem:fix-nontrivial-D4}, and \ref{lem:fix-nontrivial-D4-iota},
+the fixed-point counts satisfy:
+\[
+|\mathrm{Fix}(k)|=
+\begin{cases}
+648, & k=e,\\
+24,  & k=\iota,\\
+0,   & \text{for all other }k\in K.
+\end{cases}
+\]
+Therefore Burnside's lemma (Theorem~\ref{thm:burnside}) gives
+\[
+|X/K|
+=\frac{1}{16}\Bigl(648+24\Bigr)
+=\frac{672}{16}
+=42.
+\]
+Hence the action has exactly $42$ orbits.
+\end{proof}
+
+\section{Interpretation (optional)}
+
+\begin{remark}
+The equivalence relation generated by the $D_4$ action identifies states that
+differ only by relabeling of the four top-layer corner \emph{positions} via
+rotations and reflections of the layer. The twist-inversion involution $\iota$
+identifies states differing by reversing the direction of each corner twist
+simultaneously. Theorem~\ref{thm:42} states that, under these identifications,
+the $648$ admissible states fall into precisely $42$ equivalence classes.
+\end{remark}
+
+\end{document}
